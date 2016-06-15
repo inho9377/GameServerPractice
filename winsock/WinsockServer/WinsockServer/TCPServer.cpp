@@ -76,22 +76,24 @@ int main(int argc, char *argv[])
 	{
 		//accept()
 		addrlen = sizeof(clientaddr);
-		client_sock = accept(listen_sock, (SOCKADDR *)&clientaddr, addrlent);
+		client_sock = accept(listen_sock, (SOCKADDR *)&clientaddr, &addrlen);
 
 		if (client_sock == INVALID_SOCKET)
 		{
 			err_display("accept()");
 			break;
 		}
+
 		char clientIP[32] = { 0, };
 		inet_ntop(AF_INET, &(clientaddr.sin_addr), clientIP, 32 - 1); // http://www.joinc.co.kr/w/Site/TCP_IP/IPv6/IPv6Prog
 		printf("\n[TCP 서버] 클라이언트 접속: IP 주소=%s, 포트 번호=%d\n", clientIP, ntohs(clientaddr.sin_port));
 
 		//클라이언트와 데이터 통신
-		while (1) {
+		while (1) 
+		{
 			// 데이터 받기
 			retval = recv(client_sock, buf, BUFSIZE, 0);
-			if (retval == SOCKET_ERROR) 
+			if (retval == SOCKET_ERROR)
 			{
 				err_display("recv()");
 				break;
@@ -105,12 +107,12 @@ int main(int argc, char *argv[])
 
 			// 데이터 보내기
 			retval = send(client_sock, buf, retval, 0);
-			if (retval == SOCKET_ERROR) 
+			if (retval == SOCKET_ERROR)
 			{
 				err_display("send()");
 				break;
 			}
-
+		}
 		// closesocket()
 		closesocket(client_sock);
 		printf("[TCP 서버] 클라이언트 종료: IP 주소=%s, 포트 번호=%d\n", clientIP, ntohs(clientaddr.sin_port));
