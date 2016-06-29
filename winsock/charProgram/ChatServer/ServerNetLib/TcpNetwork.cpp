@@ -276,6 +276,8 @@ namespace NServerNetLib
 		}
 
 
+		//여기에 정보중 하나로 현재 시간을 박아넣음
+
 		char clientIP[MAX_IP_LEN] = { 0, };
 		inet_ntop(AF_INET, &(client_addr.sin_addr), clientIP, MAX_IP_LEN - 1);
 		
@@ -286,6 +288,8 @@ namespace NServerNetLib
 		ConnectedSession(newSessionIndex, (int)client_sockfd, clientIP);
 		
 		return NET_ERROR_CODE::NONE;
+
+		//루프돌면서 isconnected가 true인 경우 시간 확인하고 날림
 	}
 	
 	void TcpNetwork::ConnectedSession(const int sessionIndex, const int fd, const char* pIP)

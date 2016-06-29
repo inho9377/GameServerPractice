@@ -2,7 +2,8 @@
 
 #include "PacketID.h"
 #include "ErrorCode.h"
-
+//Why?
+//전부 보내는 패킷인건가./ 그래서 struct로..?
 namespace NCommon
 {	
 #pragma pack(push, 1)
@@ -72,9 +73,11 @@ namespace NCommon
 		short StartRoomIndex; // 로비에서 처음 요청할 때는 0, 두번째부터는 앞에 받은 데이터의 마지막 번호 + 1
 	};
 
+	
 	const int MAX_ROOM_TITLE_SIZE = 16;
 	struct RoomSmallInfo
-	{
+	{ //룸 리스트, 유저 리스트를 클라이언트가 받아야함
+		//로비도 ..?
 		short RoomIndex;
 		short RoomUserCount;
 		wchar_t RoomTitle[MAX_ROOM_TITLE_SIZE+1] = { 0, };
@@ -104,7 +107,8 @@ namespace NCommon
 	const int MAX_SEND_LOBBY_USER_LIST_COUNT = 32;
 	struct PktLobbyUserListRes : PktBase
 	{
-		bool IsEnd = false; // true 이면 더 이상 룸 리스트 요청을 하지 않는다
+		bool IsEnd = false; // true 이면 더 이상 룸 리스트 요청을 하지 않는다 (다보냈음)
+		
 		short Count = 0;
 		UserSmallInfo UserInfo[MAX_SEND_LOBBY_USER_LIST_COUNT];
 	};

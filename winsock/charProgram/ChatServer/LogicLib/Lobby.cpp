@@ -43,6 +43,8 @@ namespace NLogicLib
 
 		for (auto& room : m_RoomList)
 		{
+			//룸 객체가 알아서 패킷을 보내기 위해서
+			//각 객체가 알아서 패킷을 보내기 위해 네트워크를 각각 세팅
 			room.SetNetwork(pNetwork, pLogger);
 		}
 	}
@@ -53,6 +55,7 @@ namespace NLogicLib
 			return ERROR_CODE::LOBBY_ENTER_MAX_USER_COUNT;
 		}
 
+		//같은 유저가 들어와있는 경우(버그). 보통 로비에서 방으로 갈때 체크 제대로 안한 경우
 		if (FindUser(pUser->GetIndex()) != nullptr) {
 			return ERROR_CODE::LOBBY_ENTER_USER_DUPLICATION;
 		}
@@ -72,6 +75,7 @@ namespace NLogicLib
 
 	ERROR_CODE Lobby::LeaveUser(const int userIndex)
 	{
+		//유저가 로비에서 나감
 		RemoveUser(userIndex);
 
 		auto pUser = FindUser(userIndex);
@@ -82,6 +86,7 @@ namespace NLogicLib
 
 		pUser->LeaveLobby();
 
+		//해당 유저 인덱스를 지운다.
 		m_UserIndexDic.erase(pUser->GetIndex());
 		m_UserIDDic.erase(pUser->GetID().c_str());
 		
@@ -126,10 +131,12 @@ namespace NLogicLib
 	{ 
 		return static_cast<short>(m_UserIndexDic.size()); 
 	}
-
-
+	//
+	//상태를 중첩해서 확인할 필요는 없음
+	//(로비에있으면 로그인 한 걸로 간주)
 	void Lobby::NotifyLobbyEnterUserInfo(User* pUser)
 	{
+		
 		NCommon::PktLobbyNewUserInfoNtf pkt;
 		strncpy_s(pkt.UserID, _countof(pkt.UserID), pUser->GetID().c_str(), NCommon::MAX_USER_ID_SIZE);
 
@@ -162,7 +169,7 @@ namespace NLogicLib
 			if (room.IsUsed() == false) {
 				continue;
 			}
-
+			
 			pktRes.RoomInfo[roomCount].RoomIndex = room.GetIndex();
 			pktRes.RoomInfo[roomCount].RoomUserCount = room.GetUserCount();
 			wcsncpy_s(pktRes.RoomInfo[roomCount].RoomTitle, NCommon::MAX_ROOM_TITLE_SIZE + 1, room.GetTitle(), NCommon::MAX_ROOM_TITLE_SIZE);
@@ -173,13 +180,13 @@ namespace NLogicLib
 				break;
 			}
 		}
-
+		//멀티 바이트 대신 유니코드 사용할 것 (룸의 이름 등)
 		pktRes.Count = roomCount;
 
 		if (roomCount <= 0 || (lastCheckedIndex + 1) == m_RoomList.size()) {
 			pktRes.IsEnd = true;
 		}
-
+		//Room을 Vector로 관리
 		m_pRefNetwork->SendData(sessionId, (short)PACKET_ID::LOBBY_ENTER_ROOM_LIST_RES, sizeof(pktRes), (char*)&pktRes);
 
 		return ERROR_CODE::NONE;
@@ -200,6 +207,7 @@ namespace NLogicLib
 			auto& lobbyUser = m_UserList[i];
 			lastCheckedIndex = i;
 
+			//현재 위치가 로비인지 확인
 			if (lobbyUser.pUser == nullptr || lobbyUser.pUser->IsCurDomainInLobby() == false) {
 				continue;
 			}
@@ -213,7 +221,7 @@ namespace NLogicLib
 				break;
 			}
 		}
-
+		//EnterLobby, LobbyRoomlist, LobbyUserList
 		pktRes.Count = userCount;
 
 		if (userCount <= 0 || (lastCheckedIndex + 1) == m_UserList.size()) {

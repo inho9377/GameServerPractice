@@ -51,6 +51,8 @@ namespace NServerNetLib
 
 		char*   pSendBuffer = nullptr;
 		int     SendSize = 0;
+
+		//현재시간 변수
 	};
 
 	struct RecvPacketInfo

@@ -28,6 +28,8 @@ namespace NLogicLib
 			m_ID = "";
 			m_IsConfirm = false;
 			m_CurDomainState = DOMAIN_STATE::NONE;
+
+			//몇번 로비, 룸에있는지 넣어둠
 			m_LobbyIndex = -1;
 			m_RoomIndex = -1;
 		}
@@ -57,6 +59,7 @@ namespace NLogicLib
 			m_LobbyIndex = lobbyIndex;
 			m_CurDomainState = DOMAIN_STATE::LOBBY;
 		}
+		
 		
 		void LeaveLobby()
 		{

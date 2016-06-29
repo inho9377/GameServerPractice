@@ -85,6 +85,9 @@ namespace NLogicLib
 				}
 
 				m_pPacketProc->Process(packetInfo);
+				CheckMalignUser();
+				//몇 초당 한번씩 이곳에 조사하는 함수 (이전에 조사했던 시간을 저장해야)
+				//좀비객체도 정리
 			}
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(0));
@@ -121,5 +124,12 @@ namespace NLogicLib
 		m_pLogger->Write(NServerNetLib::LOG_TYPE::L_INFO, "%s | Port(%d), Backlog(%d)", __FUNCTION__, m_pServerConfig->Port, m_pServerConfig->BackLogCount);
 		return ERROR_CODE::NONE;
 	}
-		
+
+
+	void Main::CheckMalignUser()
+	{
+
+
+
+	}
 }

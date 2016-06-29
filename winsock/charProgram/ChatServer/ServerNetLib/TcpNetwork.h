@@ -66,6 +66,7 @@ namespace NServerNetLib
 		
 		int64_t m_ConnectSeq = 0;
 		
+		//이놈을 주기적으로 조사하면됨
 		std::vector<ClientSession> m_ClientSessionPool;
 		std::deque<int> m_ClientSessionPoolIndex;
 		

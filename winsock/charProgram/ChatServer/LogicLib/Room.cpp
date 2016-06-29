@@ -16,7 +16,7 @@ namespace NLogicLib
 
 	Room::~Room() {}
 
-
+	//Const붙일수있으면다붙임
 	void Room::Init(const short index, const short maxUserCount)
 	{
 		m_Index = index;

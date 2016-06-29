@@ -48,6 +48,7 @@ namespace NLogicLib
 
 
 		ERROR_CODE EnterUser(User* pUser);
+		//유저가 로비에서 방으로 들어가는 경우도 LeaveLobby
 		ERROR_CODE LeaveUser(const int userIndex);
 		
 		short GetUserCount();
@@ -71,6 +72,7 @@ namespace NLogicLib
 		auto MaxRoomCount() { return (short)m_RoomList.size(); }
 
 	protected:
+		//유저에게 로비의 인원을 실시간으로 알려줘야됨
 		void SendToAllUser(const short packetId, const short dataSize, char* pData, const int passUserindex = -1);
 
 		
@@ -92,7 +94,9 @@ namespace NLogicLib
 
 		short m_MaxUserCount = 0;
 		std::vector<LobbyUser> m_UserList;
+		//유저인덱스-해당유저를 갖는 Dict
 		std::unordered_map<int, User*> m_UserIndexDic;
+		//유저아이디-해당유저를 갖는 Dict
 		std::unordered_map<const char*, User*> m_UserIDDic;
 
 		std::vector<Room> m_RoomList;
