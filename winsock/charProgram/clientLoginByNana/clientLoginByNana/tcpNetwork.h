@@ -7,11 +7,10 @@
 #include <thread>
 #include <mutex>
 
-#include "C:\Users\ino\Documents\GameServerPractice\winsock\Common\conmanip.h"
-#include "C:\Users\ino\Documents\GameServerPractice\winsock\Common/ErrorCode.h"
-#include "C:\Users\ino\Documents\GameServerPractice\winsock\Common/Packet.h"
-#include "C:\Users\ino\Documents\GameServerPractice\winsock\Common/PacketID.h"
-
+#include "../../Common/conmanip.h"
+#include "../../Common/ErrorCode.h"
+#include "../../Common/Packet.h"
+#include "../../Common/PacketID.h"
 
 
 //패킷과 버퍼의 MAX SIZE설정
