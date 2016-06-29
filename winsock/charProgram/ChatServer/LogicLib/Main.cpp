@@ -24,6 +24,7 @@ namespace NLogicLib
 		Release();
 	}
 
+	//로그 객체는 가장 먼저 만들고 가장 나중에 해제할 것
 	ERROR_CODE Main::Init()
 	{
 		m_pLogger = std::make_unique<ConsoleLog>();
@@ -39,10 +40,11 @@ namespace NLogicLib
 			return ERROR_CODE::MAIN_INIT_NETWORK_INIT_FAIL;
 		}
 
-		
+		//접속한 클라이언트의 정보 관리 (로그인 정보 등)
 		m_pUserMgr = std::make_unique<UserManager>();
 		m_pUserMgr->Init(m_pServerConfig->MaxClientCount);
 
+		//방 객체 관리 (room은 lobby안에)
 		m_pLobbyMgr = std::make_unique<LobbyManager>();
 		m_pLobbyMgr->Init({ m_pServerConfig->MaxLobbyCount, 
 							m_pServerConfig->MaxLobbyUserCount,
@@ -50,6 +52,7 @@ namespace NLogicLib
 							m_pServerConfig->MaxRoomUserCount },
 						m_pNetwork.get(), m_pLogger.get());
 
+		//패킷이 만들어지면 가져와서 처리
 		m_pPacketProc = std::make_unique<PacketProcess>();
 		m_pPacketProc->Init(m_pNetwork.get(), m_pUserMgr.get(), m_pLobbyMgr.get(), m_pLogger.get());
 
@@ -95,9 +98,11 @@ namespace NLogicLib
 		wchar_t sPath[MAX_PATH] = { 0, };
 		::GetCurrentDirectory(MAX_PATH, sPath);
 
+		
 		wchar_t inipath[MAX_PATH] = { 0, };
 		_snwprintf_s(inipath, _countof(inipath), _TRUNCATE, L"%s\\ServerConfig.ini", sPath);
 
+		//ini 파일에 접근하여 값을 가져오는 부분
 		m_pServerConfig->Port = (unsigned short)GetPrivateProfileInt(L"Config", L"Port", 0, inipath);
 		m_pServerConfig->BackLogCount = GetPrivateProfileInt(L"Config", L"BackLogCount", 0, inipath);
 		m_pServerConfig->MaxClientCount = GetPrivateProfileInt(L"Config", L"MaxClientCount", 0, inipath);

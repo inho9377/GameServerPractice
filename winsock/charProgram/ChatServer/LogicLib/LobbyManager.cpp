@@ -15,14 +15,16 @@ namespace NLogicLib
 
 	LobbyManager::~LobbyManager() {}
 
-
+	//check
 	void LobbyManager::Init(const LobbyManagerConfig config, TcpNet* pNetwork, ILog* pLogger)
 	{
+
 		m_pRefLogger = pLogger;
 		m_pRefNetwork = pNetwork;
 
 		for (int i = 0; i < config.MaxLobbyCount; ++i)
 		{
+			//로비를 만들어서 넣어놓음 (벡터에)
 			Lobby lobby;
 			lobby.Init((short)i, (short)config.MaxLobbyUserCount, (short)config.MaxRoomCountByLobby, (short)config.MaxRoomUserCount);
 			lobby.SetNetwork(m_pRefNetwork, m_pRefLogger);
@@ -40,6 +42,7 @@ namespace NLogicLib
 		return &m_LobbyList[lobbyId];
 	}
 		
+	//check
 	void LobbyManager::SendLobbyListInfo(const int sessionIndex)
 	{
 		NCommon::PktLobbyListRes resPkt;

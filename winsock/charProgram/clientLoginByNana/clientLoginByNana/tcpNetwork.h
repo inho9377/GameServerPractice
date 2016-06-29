@@ -6,11 +6,11 @@
 #include <memory>
 #include <thread>
 #include <mutex>
+#include "..\..\..\Common\conmanip.h"
+#include "..\..\..\Common\ErrorCode.h"
+#include "..\..\..\Common\Packet.h"
+#include "..\..\..\Common\PacketID.h"
 
-#include "../../Common/conmanip.h"
-#include "../../Common/ErrorCode.h"
-#include "../../Common/Packet.h"
-#include "../../Common/PacketID.h"
 
 
 //패킷과 버퍼의 MAX SIZE설정
@@ -162,6 +162,7 @@ private:
 		{
 			char recvBuff[MAX_PACKET_SIZE];
 
+			//커널 API를 덜 사용해야 함 (recv가 커널 API)
 			auto recvsize = recv(m_sock, recvBuff, MAX_PACKET_SIZE, 0);
 
 			if (recvsize == 0)
@@ -191,13 +192,18 @@ private:
 			readPos += PACKET_HEADER_SIZE;
 
 			if (pPktHeader->BodySize > (dataSize - readPos))
+			{
+				//BUG
+				readPos -= PACKET_HEADER_SIZE;
 				break;
+			}
+				
 
 			if (pPktHeader->BodySize > MAX_PACKET_SIZE)
 				return;
 
 			AddPacketQueue(pPktHeader->id, pPktHeader->BodySize, &m_RecvBuffer[readPos]);
-
+			//BUG
 			readPos += pPktHeader->BodySize;
 		}
 

@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "../../Common/ErrorCode.h"
+#include "../../../Common/ErrorCode.h"
 #include "User.h"
 #include "UserManager.h"
 
@@ -48,6 +48,7 @@ namespace NLogicLib
 			return ERROR_CODE::USER_MGR_ID_DUPLICATION;
 		}
 
+		//최대 유저를 넘어서면 알려주고 못 들어가게 (혹은 대기열 등)
 		auto pUser = AllocUserObjPoolIndex();
 		if (pUser == nullptr) {
 			return ERROR_CODE::USER_MGR_MAX_USER_COUNT;
@@ -56,6 +57,7 @@ namespace NLogicLib
 		pUser->Set(sessionIndex, pszID);
 		
 		m_UserSessionDic.insert({ sessionIndex, pUser });
+		//특정유저들에 행동할 때 ID이용
 		m_UserIDDic.insert({ pszID, pUser });
 
 		return ERROR_CODE::NONE;
@@ -84,14 +86,14 @@ namespace NLogicLib
 		auto pUser = FindUser(sessionIndex);
 
 		if (pUser == nullptr) {
-			return { ERROR_CODE::USER_MGR_INVALID_SESSION_INDEX, nullptr };
+			return{ std::tuple<ERROR_CODE, User*> {ERROR_CODE::USER_MGR_INVALID_SESSION_INDEX, nullptr} };
 		}
 
 		if (pUser->IsConfirm() == false) {
-			return{ ERROR_CODE::USER_MGR_NOT_CONFIRM_USER, nullptr };
+			return{ std::tuple<ERROR_CODE, User*>{ERROR_CODE::USER_MGR_NOT_CONFIRM_USER, nullptr} };
 		}
 
-		return { ERROR_CODE::NONE, pUser };
+		return{ std::tuple<ERROR_CODE, User*>{ERROR_CODE::NONE, pUser} };
 	}
 
 	User* UserManager::FindUser(const int sessionIndex)

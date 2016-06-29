@@ -9,6 +9,8 @@
 
 using PACKET_ID = NCommon::PACKET_ID;
 
+//로그인 성공시 서버에 LOBBY_LIST_REQ를 보내고
+//서버는 그걸 받고 LOBBY_LIST_RES를 보냄
 namespace NLogicLib
 {
 	ERROR_CODE PacketProcess::LobbyEnter(PacketInfo packetInfo)
