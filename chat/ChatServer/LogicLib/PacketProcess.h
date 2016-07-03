@@ -1,0 +1,80 @@
+#pragma once
+
+#include "../../Common/Packet.h"
+#include "../ServerNetLib/Define.h"
+#include "../../Common/ErrorCode.h"
+
+using ERROR_CODE = NCommon::ERROR_CODE;
+
+namespace NServerNetLib
+{
+	class ITcpNetwork;
+}
+
+namespace NServerNetLib
+{
+	class ILog;
+}
+
+
+namespace NLogicLib
+{
+	class UserManager;
+	class LobbyManager;
+
+	//에러 체크를 위한 매크로문 설정
+#define CHECK_START  ERROR_CODE __result=ERROR_CODE::NONE;
+#define CHECK_ERROR(f) __result=f; goto CHECK_ERR;
+
+	class PacketProcess
+	{
+		using PacketInfo = NServerNetLib::RecvPacketInfo;
+		//보통 switcH문보다 함수포인터 사용
+		typedef ERROR_CODE(PacketProcess::*PacketFunc)(PacketInfo);
+		PacketFunc PacketFuncArray[(int)NCommon::PACKET_ID::MAX];
+
+		using TcpNet = NServerNetLib::ITcpNetwork;
+		using ILog = NServerNetLib::ILog;
+
+	public:
+		PacketProcess();
+		~PacketProcess();
+
+		void Init(TcpNet* pNetwork, UserManager* pUserMgr, LobbyManager* pLobbyMgr, ILog* pLogger);
+
+		void Process(PacketInfo packetInfo);
+
+	private:
+		//로그 찍는거
+		ILog* m_pRefLogger;
+		TcpNet* m_pRefNetwork;
+
+		//유저 매니저, 로비매니저를 갖고있다.
+		UserManager* m_pRefUserMgr;
+		LobbyManager* m_pRefLobbyMgr;
+
+
+
+
+	private:
+		ERROR_CODE NtfSysCloseSesson(PacketInfo packetInfo);
+
+		ERROR_CODE Login(PacketInfo packetInfo);
+
+		ERROR_CODE LobbyList(PacketInfo packetInfo);
+
+		ERROR_CODE LobbyEnter(PacketInfo packetInfo);
+
+		ERROR_CODE LobbyRoomList(PacketInfo packetInfo);
+
+		ERROR_CODE LobbyUserList(PacketInfo packetInfo);
+
+		ERROR_CODE LobbyLeave(PacketInfo packetInfo);
+
+		ERROR_CODE RoomEnter(PacketInfo packetInfo);
+
+		ERROR_CODE RoomLeave(PacketInfo packetInfo);
+
+		ERROR_CODE RoomChat(PacketInfo packetInfo);
+	};
+}
