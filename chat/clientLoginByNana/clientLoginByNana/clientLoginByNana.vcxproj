@@ -71,9 +71,9 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\ino\Downloads\nana 1.3.0\nana\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\ino\Downloads\nana 1.3.0\nana\build\bin;$(LibraryPath)</LibraryPath>
-    <SourcePath>C:\Users\ino\Downloads\nana 1.3.0\nana\source;$(SourcePath)</SourcePath>
+    <IncludePath>$(Projectdir)\nana 1.3.0\nana\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(Projectdir)\nana 1.3.0\nana\build\bin;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(Projectdir)\nana 1.3.0\nana\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -91,14 +91,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\ino\Downloads\nana 1.3.0\nana\include\nana;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Projectdir)\nana 1.3.0\nana\include\nana;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>nana_$(PlatformToolset)_$(Configuration)_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\ino\Downloads\nana 1.3.0\nana\build\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(Projectdir)\nana 1.3.0\nana\build\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
