@@ -21,17 +21,11 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UiManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MainForm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="UiManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tcpNetwork.h">
       <Filter>Header Files</Filter>
     </ClInclude>

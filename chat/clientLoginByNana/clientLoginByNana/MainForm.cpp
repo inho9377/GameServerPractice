@@ -35,7 +35,7 @@ void MainForm::Init()
 
 void MainForm::CreateGUI()
 {
-	// https://moqups.com/   여기에서 디자인 하자
+	// https://moqups.com/ 
 
 	m_fm = std::make_unique<form>(API::make_center(900, 700));
 	m_fm->caption("Chat Client");
