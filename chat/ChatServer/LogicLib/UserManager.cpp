@@ -91,6 +91,7 @@ namespace NLogicLib
 			return{ std::tuple<ERROR_CODE, User*>{ERROR_CODE::USER_MGR_NOT_CONFIRM_USER, nullptr} };
 		}
 
+
 		return{ std::tuple<ERROR_CODE, User*>{ERROR_CODE::NONE, pUser} };
 	}
 
@@ -108,12 +109,18 @@ namespace NLogicLib
 
 	User* UserManager::FindUser(const char* pszID)
 	{
-		auto findIter = m_UserIDDic.find(pszID);
 
-		if (findIter == m_UserIDDic.end()) {
-			return nullptr;
+		for (auto & finditer : m_UserSessionDic)
+		{
+			if (finditer.second->GetID() == pszID)
+			{
+				return finditer.second;
+			}
+
 		}
+		//auto findIter = m_UserIDDic.find(pszID);
 
-		return (User*)findIter->second;
+		
+		return nullptr;
 	}
 }
