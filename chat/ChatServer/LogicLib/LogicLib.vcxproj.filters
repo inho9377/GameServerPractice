@@ -40,6 +40,9 @@
     <ClInclude Include="ConnectedUserManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RoomManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lobby.cpp">
@@ -67,6 +70,9 @@
       <Filter>SourceFiles</Filter>
     </ClCompile>
     <ClCompile Include="UserManager.cpp">
+      <Filter>SourceFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomManager.cpp">
       <Filter>SourceFiles</Filter>
     </ClCompile>
   </ItemGroup>

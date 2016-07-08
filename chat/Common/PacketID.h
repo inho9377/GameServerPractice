@@ -49,6 +49,9 @@ namespace NCommon
 		ROOM_CHAT_RES = 77,
 		ROOM_CHAT_NTF = 78,
 
+		ROOM_ENTER_USER_LIST_REQ = 86,
+		ROOM_ENTER_USER_LIST_RES = 87,
+
 		MAX = 256
 	};
 

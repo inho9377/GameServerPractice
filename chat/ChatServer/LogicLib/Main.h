@@ -18,6 +18,7 @@ namespace NLogicLib
 	class UserManager;
 	class LobbyManager;
 	class PacketProcess;
+	class RoomManager;
 
 	class Main
 	{
@@ -48,6 +49,7 @@ namespace NLogicLib
 		std::unique_ptr<PacketProcess> m_pPacketProc;
 		std::unique_ptr<UserManager> m_pUserMgr;
 		std::unique_ptr<LobbyManager> m_pLobbyMgr;
+		std::unique_ptr<RoomManager> m_pRoomMgr;
 		
 	};
 }

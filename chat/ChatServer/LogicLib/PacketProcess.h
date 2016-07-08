@@ -18,7 +18,7 @@ namespace NLogicLib
 	class ConnectedUserManager;
 	class UserManager;
 	class LobbyManager;
-
+	class RoomManager;
 	#define CHECK_START  ERROR_CODE __result=ERROR_CODE::NONE;
 	#define CHECK_ERROR(f) __result=f; goto CHECK_ERR;
 
@@ -35,7 +35,7 @@ namespace NLogicLib
 		PacketProcess();
 		~PacketProcess();
 
-		void Init(TcpNet* pNetwork, UserManager* pUserMgr, LobbyManager* pLobbyMgr, ILog* pLogger);
+		void Init(TcpNet* pNetwork, UserManager* pUserMgr, LobbyManager* pLobbyMgr, ILog* pLogger, RoomManager* pRoomMgr);
 
 		void Process(PacketInfo packetInfo);
 
@@ -47,7 +47,7 @@ namespace NLogicLib
 				
 		UserManager* m_pRefUserMgr;
 		LobbyManager* m_pRefLobbyMgr;
-
+		RoomManager* m_pRefRoomMgr;
 		std::unique_ptr<ConnectedUserManager> m_pConnectedUserManager;
 						
 	private:
@@ -76,6 +76,6 @@ namespace NLogicLib
 
 		ERROR_CODE RoomChat(PacketInfo packetInfo);
 
-		
+		ERROR_CODE RoomUserList(PacketInfo packetInfo);
 	};
 }

@@ -44,6 +44,8 @@ namespace NLogicLib
 
 		ERROR_CODE LeaveUser(const short userIndex);
 
+		ERROR_CODE SendUserList(const int sessionId, const short startUserIndex);
+
 
 		void SendToAllUser(const short packetId, const short dataSize, char* pData, const int passUserindex = -1);
 

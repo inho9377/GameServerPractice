@@ -6,6 +6,7 @@
 #include "Room.h"
 #include "Lobby.h"
 #include "LobbyManager.h"
+#include "RoomManager.h"
 #include "PacketProcess.h"
 
 using LOG_TYPE = NServerNetLib::LOG_TYPE;
@@ -15,12 +16,13 @@ namespace NLogicLib
 	PacketProcess::PacketProcess() {}
 	PacketProcess::~PacketProcess() {}
 
-	void PacketProcess::Init(TcpNet* pNetwork, UserManager* pUserMgr, LobbyManager* pLobbyMgr, ILog* pLogger)
+	void PacketProcess::Init(TcpNet* pNetwork, UserManager* pUserMgr, LobbyManager* pLobbyMgr, ILog* pLogger, RoomManager* pRoomMgr)
 	{
 		m_pRefLogger = pLogger;
 		m_pRefNetwork = pNetwork;
 		m_pRefUserMgr = pUserMgr;
 		m_pRefLobbyMgr = pLobbyMgr;
+		m_pRefRoomMgr = pRoomMgr;
 
 		m_pConnectedUserManager = std::make_unique<ConnectedUserManager>();
 		m_pConnectedUserManager->Init(pNetwork->ClientSessionPoolSize(), pNetwork, pLogger);
@@ -46,6 +48,8 @@ namespace NLogicLib
 		PacketFuncArray[(int)commonPacketId::ROOM_ENTER_REQ] = &PacketProcess::RoomEnter;
 		PacketFuncArray[(int)commonPacketId::ROOM_LEAVE_REQ] = &PacketProcess::RoomLeave;
 		PacketFuncArray[(int)commonPacketId::ROOM_CHAT_REQ] = &PacketProcess::RoomChat;
+		PacketFuncArray[(int)commonPacketId::ROOM_ENTER_USER_LIST_REQ] = &PacketProcess::RoomUserList;
+
 	}
 	
 	void PacketProcess::Process(PacketInfo packetInfo)

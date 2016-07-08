@@ -6,6 +6,7 @@
 #include "../ServerNetLib/TcpNetwork.h"
 #include "ConsoleLogger.h"
 #include "LobbyManager.h"
+#include "RoomManager.h"
 #include "PacketProcess.h"
 #include "UserManager.h"
 #include "Main.h"
@@ -50,8 +51,13 @@ namespace NLogicLib
 							m_pServerConfig->MaxRoomUserCount },
 						m_pNetwork.get(), m_pLogger.get());
 
+		m_pRoomMgr = std::make_unique<RoomManager>();
+		m_pRoomMgr->Init({ 35, 35 },
+			m_pNetwork.get(), m_pLogger.get());
+
+
 		m_pPacketProc = std::make_unique<PacketProcess>();
-		m_pPacketProc->Init(m_pNetwork.get(), m_pUserMgr.get(), m_pLobbyMgr.get(), m_pLogger.get());
+		m_pPacketProc->Init(m_pNetwork.get(), m_pUserMgr.get(), m_pLobbyMgr.get(), m_pLogger.get(), m_pRoomMgr.get());
 
 		m_IsRun = true;
 

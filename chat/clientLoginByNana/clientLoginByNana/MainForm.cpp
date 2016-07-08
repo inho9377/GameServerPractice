@@ -52,6 +52,8 @@ void MainForm::CreateGUI()
 
 	m_pClientSceenLobby->CreateUI(m_fm.get());
 
+	m_pClientSceenRoom->CreateUI(m_fm.get());
+
 
 	//m_ptxtCurState = std::make_unique<textbox>((form&)*m_fm.get(), nana::rectangle(450, 15, 120, 20));
 	//m_ptxtCurState->caption("State: Disconnect");
@@ -142,7 +144,7 @@ void MainForm::PacketProcess()
 		m_pClientSceen->ProcessPacket(packet.PacketId, packet.pData);
 		m_pClientSceenLogin->ProcessPacket(packet.PacketId, packet.pData);
 		m_pClientSceenLobby->ProcessPacket(packet.PacketId, packet.pData);
-		//m_pClientSceenRoom->ProcessPacket(packet.PacketId, packet.pData);
+		m_pClientSceenRoom->ProcessPacket(packet.PacketId, packet.pData);
 
 		if (packet.pData != nullptr) {
 			delete[] packet.pData;
@@ -153,5 +155,6 @@ void MainForm::PacketProcess()
 	m_pClientSceen->Update();
 	m_pClientSceenLogin->Update();
 	m_pClientSceenLobby->Update();
+	m_pClientSceenRoom->Update();
 }
 

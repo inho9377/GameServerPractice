@@ -124,6 +124,22 @@ namespace NCommon
 	};
 
 
+	//- 룸의 유저 리스트 요청
+	struct PktRoomUserListReq
+	{
+		short StartUserIndex;
+	};
+
+	struct PktRoomUserListRes : PktBase
+	{
+		bool IsEnd = false; // true 이면 더 이상 룸 리스트 요청을 하지 않는다 (다보냈음)
+
+		short Count = 0;
+		UserSmallInfo UserInfo[MAX_SEND_LOBBY_USER_LIST_COUNT];
+	};
+
+
+
 	//- 로비에서 나가기 요청
 	struct PktLobbyLeaveReq {};
 

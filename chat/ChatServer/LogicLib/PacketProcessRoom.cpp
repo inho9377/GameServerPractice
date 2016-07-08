@@ -4,6 +4,7 @@
 #include "User.h"
 #include "UserManager.h"
 #include "LobbyManager.h"
+#include "RoomManager.h"
 #include "Lobby.h"
 #include "Room.h"
 #include "PacketProcess.h"
@@ -51,6 +52,8 @@ namespace NLogicLib
 			if (ret != ERROR_CODE::NONE) {
 				CHECK_ERROR(ret);
 			}
+
+			m_pRefRoomMgr->CreateRoom(pRoom);
 		}
 		else
 		{
@@ -139,6 +142,40 @@ namespace NLogicLib
 	CHECK_ERR:
 		resPkt.SetError(__result);
 		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_LEAVE_RES, sizeof(resPkt), (char*)&resPkt);
+		return (ERROR_CODE)__result;
+	}
+
+	ERROR_CODE PacketProcess::RoomUserList(PacketInfo packetInfo)
+	{
+		CHECK_START
+			// 현재 룸에 있는지 조사한다.
+			// 유저 리스트를 보내준다.
+
+			auto pUserRet = m_pRefUserMgr->GetUser(packetInfo.SessionIndex);
+		auto errorCode = std::get<0>(pUserRet);
+
+		if (errorCode != ERROR_CODE::NONE) {
+			CHECK_ERROR(errorCode);
+		}
+
+		auto pUser = std::get<1>(pUserRet);
+
+		if (pUser->IsCurDomainInRoom() == false) {
+			CHECK_ERROR(ERROR_CODE::LOBBY_USER_LIST_INVALID_DOMAIN);
+		}
+
+
+		auto reqPkt = (NCommon::PktRoomUserListReq*)packetInfo.pRefData;
+
+		auto pRoom = m_pRefRoomMgr->GetRoom(pUser->GetRoomIndex());
+	
+		pRoom->SendUserList(pUser->GetSessioIndex(), reqPkt->StartUserIndex);
+
+		return ERROR_CODE::NONE;
+	CHECK_ERR:
+		NCommon::PktLobbyUserListRes resPkt;
+		resPkt.SetError(__result);
+		m_pRefNetwork->SendData(packetInfo.SessionIndex, (short)PACKET_ID::ROOM_ENTER_USER_LIST_RES, sizeof(NCommon::PktBase), (char*)&resPkt);
 		return (ERROR_CODE)__result;
 	}
 

@@ -43,14 +43,14 @@ public:
 		case (short)PACKET_ID::LOBBY_ENTER_ROOM_LIST_RES:
 		{
 			auto pktRes = (NCommon::PktLobbyRoomListRes*)pData;
+			for (int i = 0; i < pktRes->Count; ++i)
+			{
+				UpdateRoomInfo(&pktRes->RoomInfo[i]);
+			}
 
 			if (pktRes->IsEnd == false)
 			{
-				for (int i = 0; i < pktRes->Count; ++i)
-				{
-					UpdateRoomInfo(&pktRes->RoomInfo[i]);
-				}
-
+				
 				RequestRoomList(pktRes->RoomInfo[pktRes->Count - 1].RoomIndex + 1);
 			}
 			else
@@ -101,7 +101,8 @@ public:
 			auto pktRes = (NCommon::PktLobbyChatRes*)pData;
 			if (pktRes->ErrorCode == (short)NCommon::ERROR_CODE::NONE)
 			{
-
+				ShowChatMessage("___", m_beforeInputMessage);
+				m_beforeInputMessage.clear();
 			}
 			else
 			{
@@ -130,7 +131,8 @@ public:
 			auto pktRes = (NCommon::PktLobbySecretChatRes*)pData;
 			if (pktRes->ErrorCode == (short)NCommon::ERROR_CODE::NONE)
 			{
-				
+				ShowChatMessage("(Secret)__", m_beforeInputMessage);
+				m_beforeInputMessage.clear();
 			}
 			else
 			{
@@ -171,8 +173,19 @@ public:
 			this->CreateRoom();
 			//this->LogInOut();
 		});
+
 		m_RoomCreateBtn->enabled(true);
 		
+
+		m_RoomEnterBtn = std::make_shared<button>((form&)*m_pForm, nana::rectangle(310, 320, 102, 23));
+		m_RoomEnterBtn->caption("RoomEnter");
+		m_RoomEnterBtn->events().click([&]() {
+			this->RequestEnterRoom();
+			//this->LogInOut();
+		});
+		m_RoomEnterBtn->enabled(true);
+
+
 		m_LobbyUserList = std::make_shared<listbox>((form&)*m_pForm, nana::rectangle(10, 360, 120, 383));
 		m_LobbyUserList->append_header("UserID", 90);
 
@@ -207,6 +220,7 @@ public:
 		m_chatBtn->hide();
 		m_sendMessage->hide();
 		m_toUserID->hide();
+		m_RoomEnterBtn->hide();
 	}
 
 	void UIShow()
@@ -233,6 +247,7 @@ public:
 		m_chatBtn->show();
 		m_sendMessage->show();
 		m_toUserID->show();
+		m_RoomEnterBtn->show();
 	}
 
 	void CreateRoom()
@@ -246,7 +261,8 @@ public:
 
 		NCommon::PktRoomEnterReq resPkt;
 		resPkt.IsCreate = true;
-		resPkt.RoomIndex = 0;
+		resPkt.RoomIndex = m_entire_room_index;
+		m_entire_room_index++;
 		wcscpy(resPkt.RoomTitle, m_RoomTitleTxt->caption_wstring().c_str());
 		//resPkt.RoomInfo = newRoom;
 
@@ -277,6 +293,33 @@ public:
 		NCommon::PktLobbyUserListReq reqPkt;
 		reqPkt.StartUserIndex = startIndex;
 		m_pRefNetwork->SendPacket((short)PACKET_ID::LOBBY_ENTER_USER_LIST_REQ, sizeof(reqPkt), (char*)&reqPkt);
+	}
+
+	void RequestEnterRoom()
+	{
+		if (GetCurSceenType() != CLIENT_SCEEN_TYPE::LOBBY)
+		{
+			nana::msgbox m((form&)*m_pForm, "Require Lobby", nana::msgbox::ok);
+			m.icon(m.icon_warning).show();
+			return;
+		}
+
+		auto selItem = m_LobbyRoomList->selected();
+		if (selItem.empty())
+		{
+			nana::msgbox m((form&)*m_pForm, "Fail Don't Select ROOM", nana::msgbox::ok);
+			m.icon(m.icon_warning).show();
+			return;
+		}
+
+		auto index = selItem[0].item;
+		auto roomId = std::atoi(m_LobbyRoomList->at(0).at(index).text(0).c_str());
+		NCommon::PktRoomEnterReq reqPkt;
+		reqPkt.RoomIndex = roomId;
+		reqPkt.IsCreate = false;
+		//reqPkt.RoomTitle
+		m_pRefNetwork->SendPacket((short)PACKET_ID::ROOM_ENTER_REQ, sizeof(reqPkt), (char*)&reqPkt);
+
 	}
 	
 	void SetRoomListGui()
@@ -422,6 +465,9 @@ public:
 			char szID[64] = { 0, };
 			UnicodeToAnsi(m_toUserID->caption_wstring().c_str(), 64, szID);
 
+			
+			m_beforeInputMessage = m_sendMessage->caption_wstring();
+
 			if ((defaultToUserID.compare(szID) == 0) || (szID[0] == '\0'))
 			{
 				SendAllMessage();
@@ -455,11 +501,21 @@ public:
 
 		void ShowChatMessage(char* userID, wchar_t* msg)
 		{
-			std::string strID = userID;
+			std::string se = "(se";
+			std::string strID = userID + se;
+			
 			char szMsg[64] = { 0, };
 			UnicodeToAnsi(msg, 64, szMsg);
 			std::string strMsg = szMsg;
 			m_chatBox->at(0).append({ strID , szMsg });
+		}
+
+		void ShowChatMessage(char* userID, std::wstring msg)
+		{
+			std::string strID = userID;
+			std::string strMsg;
+			strMsg.assign(msg.begin(), msg.end());
+			m_chatBox->at(0).append({ strID , strMsg });
 		}
 
 private:
@@ -483,6 +539,10 @@ private:
 	std::unique_ptr<textbox> m_sendMessage;
 	std::unique_ptr<button> m_chatBtn;
 	std::unique_ptr<textbox> m_toUserID;
+	
+	std::wstring m_beforeInputMessage;
+	
+	int m_entire_room_index = 0;
 
 
 	const std::string defaultToUserID = "Secret Chat ID";
