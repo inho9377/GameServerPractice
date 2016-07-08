@@ -233,6 +233,9 @@ namespace NLogicLib
 				continue;
 			}
 
+			if (lobbyUser.pUser->GetSessioIndex() == sessionId)
+				continue;
+
 			pktRes.UserInfo[userCount].LobbyUserIndex = (short)i;
 			strncpy_s(pktRes.UserInfo[userCount].UserID, NCommon::MAX_USER_ID_SIZE + 1, lobbyUser.pUser->GetID().c_str(), NCommon::MAX_USER_ID_SIZE);
 
@@ -248,7 +251,7 @@ namespace NLogicLib
 		if (userCount <= 0 || (lastCheckedIndex + 1) == m_UserList.size()) {
 			pktRes.IsEnd = true;
 		}
-
+		
 		m_pRefNetwork->SendData(sessionId, (short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES, sizeof(pktRes), (char*)&pktRes);
 
 		return ERROR_CODE::NONE;

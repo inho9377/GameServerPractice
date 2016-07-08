@@ -62,13 +62,12 @@ public:
 		case (short)PACKET_ID::LOBBY_ENTER_USER_LIST_RES:
 		{
 			auto pktRes = (NCommon::PktLobbyUserListRes*)pData;
-
+			for (int i = 0; i < pktRes->Count; ++i)
+			{
+				UpdateUserInfo(false, pktRes->UserInfo[i].UserID);
+			}
 			if (pktRes->IsEnd == false)
 			{
-				for (int i = 0; i < pktRes->Count; ++i)
-				{
-					UpdateUserInfo(false, pktRes->UserInfo[i].UserID);
-				}
 				
 				RequestUserList(pktRes->UserInfo[pktRes->Count - 1].LobbyUserIndex + 1);
 			}
@@ -115,8 +114,15 @@ public:
 		case (short)PACKET_ID::LOBBY_CHAT_NTF:
 		{
 			auto pktRes = (NCommon::PktLobbyChatNtf*)pData;
+			ShowChatMessage(pktRes->UserID, pktRes->Msg);
+			/*auto pktRes = (NCommon::PktLobbyChatNtf*)pData;
 			//std::string resultMsg = pktRes->UserID + " : " + Msg;
-
+			std::string strID = pktRes->UserID;
+			char szMsg[64] = { 0, };
+			UnicodeToAnsi(pktRes->Msg, 64, szMsg);
+			std::string strMsg = szMsg;
+			m_chatBox->at(0).append({ strID , szMsg });
+			*/
 			break;
 		}
 		case (short)PACKET_ID::LOBBY_SECRET_CHAT_RES:
@@ -124,7 +130,7 @@ public:
 			auto pktRes = (NCommon::PktLobbySecretChatRes*)pData;
 			if (pktRes->ErrorCode == (short)NCommon::ERROR_CODE::NONE)
 			{
-
+				
 			}
 			else
 			{
@@ -136,7 +142,7 @@ public:
 		case (short)PACKET_ID::LOBBY_SECRET_CHAT_NTF:
 		{
 			auto pktRes = (NCommon::PktLobbySecretChatNtf*)pData;
-
+			ShowChatMessage(pktRes->UserID, pktRes->Msg);
 			break;
 		}
 		default:
@@ -205,9 +211,6 @@ public:
 
 	void UIShow()
 	{
-		int aabc = m_chatBox->caption_wstring().compare(L"\0");
-		int babab = m_toUserID->caption_wstring().compare(L"\0");
-		int c = m_RoomTitleTxt->caption_wstring().compare(L"\0");
 
 		if (m_RoomTitleTxt->caption_wstring().compare(L"\0") == 0)
 			m_RoomCreateBtn->enabled(false);
@@ -215,7 +218,7 @@ public:
 			m_RoomCreateBtn->enabled(true);
 
 
-		if ((m_sendMessage->caption_wstring().compare(L"\0") == 0) || (m_toUserID->caption_wstring().compare(L"\0") == 0))
+		if (m_sendMessage->caption_wstring().compare(L"\0") == 0)
 			m_chatBtn->enabled(false);
 		else
 			m_chatBtn->enabled(true);
@@ -450,6 +453,14 @@ public:
 			m_pRefNetwork->SendPacket((short)PACKET_ID::LOBBY_CHAT_REQ, sizeof(reqPkt), (char*)&reqPkt);
 		}
 
+		void ShowChatMessage(char* userID, wchar_t* msg)
+		{
+			std::string strID = userID;
+			char szMsg[64] = { 0, };
+			UnicodeToAnsi(msg, 64, szMsg);
+			std::string strMsg = szMsg;
+			m_chatBox->at(0).append({ strID , szMsg });
+		}
 
 private:
 	form* m_pForm = nullptr;
