@@ -20,5 +20,11 @@ namespace NServerNetLib
 		virtual void Run() {}
 		
 		virtual RecvPacketInfo GetPacketInfo() { return RecvPacketInfo(); }
+
+		virtual void Release() {}
+
+		virtual int ClientSessionPoolSize() { return 0; }
+
+		virtual void ForcingClose(const int sessionIndex) {}
 	};
 }

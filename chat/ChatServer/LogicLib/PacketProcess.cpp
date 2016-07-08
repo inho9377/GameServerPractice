@@ -1,5 +1,6 @@
 #include "../ServerNetLib/ILog.h"
 #include "../ServerNetLib/TcpNetwork.h"
+#include "ConnectedUserManager.h"
 #include "User.h"
 #include "UserManager.h"
 #include "Room.h"
@@ -10,17 +11,19 @@
 using LOG_TYPE = NServerNetLib::LOG_TYPE;
 
 namespace NLogicLib
-{
+{	
 	PacketProcess::PacketProcess() {}
 	PacketProcess::~PacketProcess() {}
 
-	//패킷 프로세스 초기화 (총괄 클래스)
 	void PacketProcess::Init(TcpNet* pNetwork, UserManager* pUserMgr, LobbyManager* pLobbyMgr, ILog* pLogger)
 	{
 		m_pRefLogger = pLogger;
 		m_pRefNetwork = pNetwork;
 		m_pRefUserMgr = pUserMgr;
 		m_pRefLobbyMgr = pLobbyMgr;
+
+		m_pConnectedUserManager = std::make_unique<ConnectedUserManager>();
+		m_pConnectedUserManager->Init(pNetwork->ClientSessionPoolSize(), pNetwork, pLogger);
 
 		using netLibPacketId = NServerNetLib::PACKET_ID;
 		using commonPacketId = NCommon::PACKET_ID;
@@ -29,39 +32,51 @@ namespace NLogicLib
 			PacketFuncArray[i] = nullptr;
 		}
 
-		//패킷 함수 배열에 계속 추가
-		PacketFuncArray[(int)netLibPacketId::NTF_SYS_CLOSE_SESSION] = &PacketProcess::NtfSysCloseSesson;
+		PacketFuncArray[(int)netLibPacketId::NTF_SYS_CONNECT_SESSION] = &PacketProcess::NtfSysConnctSession;
+		PacketFuncArray[(int)netLibPacketId::NTF_SYS_CLOSE_SESSION] = &PacketProcess::NtfSysCloseSession;
 		PacketFuncArray[(int)commonPacketId::LOGIN_IN_REQ] = &PacketProcess::Login;
 		PacketFuncArray[(int)commonPacketId::LOBBY_LIST_REQ] = &PacketProcess::LobbyList;
 		PacketFuncArray[(int)commonPacketId::LOBBY_ENTER_REQ] = &PacketProcess::LobbyEnter;
 		PacketFuncArray[(int)commonPacketId::LOBBY_ENTER_ROOM_LIST_REQ] = &PacketProcess::LobbyRoomList;
 		PacketFuncArray[(int)commonPacketId::LOBBY_ENTER_USER_LIST_REQ] = &PacketProcess::LobbyUserList;
 		PacketFuncArray[(int)commonPacketId::LOBBY_LEAVE_REQ] = &PacketProcess::LobbyLeave;
+		PacketFuncArray[(int)commonPacketId::LOBBY_CHAT_REQ] = &PacketProcess::LobbyChat;
+		PacketFuncArray[(int)commonPacketId::LOBBY_SECRET_CHAT_REQ] = &PacketProcess::LobbySecretChat;
+
 		PacketFuncArray[(int)commonPacketId::ROOM_ENTER_REQ] = &PacketProcess::RoomEnter;
 		PacketFuncArray[(int)commonPacketId::ROOM_LEAVE_REQ] = &PacketProcess::RoomLeave;
 		PacketFuncArray[(int)commonPacketId::ROOM_CHAT_REQ] = &PacketProcess::RoomChat;
 	}
-
-	//패킷 프로세스
+	
 	void PacketProcess::Process(PacketInfo packetInfo)
 	{
 		auto packetId = packetInfo.PacketId;
-
+		
 		if (PacketFuncArray[packetId] == nullptr)
 		{
-			//로그추가예정
+			//TODO: 로그 남긴다
+			return;
 		}
 
-		//packet에 해당하는 함수 호출
 		(this->*PacketFuncArray[packetId])(packetInfo);
 	}
 
-	//세션을 닫는다. ??
-	ERROR_CODE PacketProcess::NtfSysCloseSesson(PacketInfo packetInfo)
+	void PacketProcess::StateCheck()
+	{
+		m_pConnectedUserManager->LoginCheck();
+	}
+
+	ERROR_CODE PacketProcess::NtfSysConnctSession(PacketInfo packetInfo)
+	{
+		m_pConnectedUserManager->SetConnectSession(packetInfo.SessionIndex);
+		return ERROR_CODE::NONE;
+	}
+
+	ERROR_CODE PacketProcess::NtfSysCloseSession(PacketInfo packetInfo)
 	{
 		auto pUser = std::get<1>(m_pRefUserMgr->GetUser(packetInfo.SessionIndex));
 
-		if (pUser)
+		if (pUser) 
 		{
 			auto pLobby = m_pRefLobbyMgr->GetLobby(pUser->GetLobbyIndex());
 			if (pLobby)
@@ -85,13 +100,14 @@ namespace NLogicLib
 
 				m_pRefLogger->Write(LOG_TYPE::L_INFO, "%s | NtfSysCloseSesson. sessionIndex(%d). Lobby Out", __FUNCTION__, packetInfo.SessionIndex);
 			}
-
-			m_pRefUserMgr->RemoveUser(packetInfo.SessionIndex);
+			
+			m_pRefUserMgr->RemoveUser(packetInfo.SessionIndex);		
 		}
-
+		
+		m_pConnectedUserManager->SetDisConnectSession(packetInfo.SessionIndex);
 
 		m_pRefLogger->Write(LOG_TYPE::L_INFO, "%s | NtfSysCloseSesson. sessionIndex(%d)", __FUNCTION__, packetInfo.SessionIndex);
 		return ERROR_CODE::NONE;
 	}
-
+	
 }

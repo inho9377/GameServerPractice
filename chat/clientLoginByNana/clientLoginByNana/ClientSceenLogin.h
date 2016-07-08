@@ -33,25 +33,52 @@ public:
 	{
 		m_pForm = pform;
 
-		m_LobbyList = std::make_unique<listbox>((form&)*m_pForm, nana::rectangle(22, 106, 165, 383));
-		m_LobbyList->append_header("LobbyId", 60);//L"로비ID"
-		m_LobbyList->append_header("Cur", 40);
-		m_LobbyList->append_header("Max", 40);
+		m_LobbyList = std::make_unique<listbox>((form&)*m_pForm, nana::rectangle(22, 22, 800, 600));
+		m_LobbyList->append_header("LobbyId", 600);//L"로비ID"
+		m_LobbyList->append_header("Cur", 80);
+		m_LobbyList->append_header("Max", 80);
 
-		m_btnEnterLobby = std::make_unique<button>((form&)*m_pForm, nana::rectangle(22, 490, 102, 23));
+		m_btnEnterLobby = std::make_unique<button>((form&)*m_pForm, nana::rectangle(22, 623, 102, 23));
 		m_btnEnterLobby->caption("Enter Channel");
 		m_btnEnterLobby->events().click([&]() {
 			this->RequestEnterLobby();
 		});
+
+		
+
+		//m_manualTxt = std::make_unique<label>((form&)*m_pForm, nana::rectangle(77, 500, 150, 23));
+		//m_manualTxt->caption("그대로 채팅할경우 전체 채팅, 상대 아이디를 입력하면 귓속말");
+		UIBlind();
 	}
 
+	void UIBlind()
+	{
+		m_LobbyList->hide();
+		m_btnEnterLobby->hide();
 
+		
+		//m_manualTxt->hide();
+	}
+
+	void UIShow()
+	{
+		m_LobbyList->show();
+		m_btnEnterLobby->show();
+
+		
+		//m_manualTxt->show();
+	}
+
+	
 	bool ProcessPacket(const short packetId, char* pData) override
 	{
 		switch (packetId)
 		{
+
+
 		case (short)PACKET_ID::LOBBY_LIST_RES:
 		{
+			
 			auto pktRes = (NCommon::PktLobbyListRes*)pData;
 
 			if (pktRes->ErrorCode == (short)NCommon::ERROR_CODE::NONE)
@@ -71,8 +98,10 @@ public:
 			{
 				std::cout << "[LOBBY_LIST_RES] ErrorCode: " << pktRes->ErrorCode << std::endl;
 			}
+			break;
 		}
-		break;
+
+		
 		default:
 			return false;
 		}
@@ -82,6 +111,8 @@ public:
 
 
 private:
+	
+
 	void RequestLobbyList()
 	{
 		m_pRefNetwork->SendPacket((short)PACKET_ID::LOBBY_LIST_REQ, 0, nullptr);
@@ -113,9 +144,10 @@ private:
 
 private:
 	form* m_pForm = nullptr;
-
+	
 	std::unique_ptr<button> m_btnEnterLobby;
 	std::unique_ptr<listbox> m_LobbyList;
 
 	std::chrono::system_clock::time_point m_TimeLastedReqLobbyList = std::chrono::system_clock::now();
+	
 };

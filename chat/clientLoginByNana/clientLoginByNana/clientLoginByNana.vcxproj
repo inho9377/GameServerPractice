@@ -80,6 +80,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(Projectdir)\nana 1.3.0\nana\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(Projectdir)\nana 1.3.0\nana\build\bin;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(Projectdir)\nana 1.3.0\nana\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -93,6 +96,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(Projectdir)\nana 1.3.0\nana\include\nana;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,12 +127,16 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(Projectdir)\nana 1.3.0\nana\include\nana;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(Projectdir)\nana 1.3.0\nana\build\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nana_$(PlatformToolset)_$(Configuration)_$(PlatformShortName).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -153,11 +161,17 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Common\conmanip.h" />
+    <ClInclude Include="..\..\Common\ErrorCode.h" />
+    <ClInclude Include="..\..\Common\Packet.h" />
+    <ClInclude Include="..\..\Common\PacketID.h" />
     <ClInclude Include="ClientSceen.h" />
     <ClInclude Include="ClientSceenLobby.h" />
     <ClInclude Include="ClientSceenLogin.h" />
+    <ClInclude Include="ClientSceenRoom.h" />
     <ClInclude Include="IClientSceen.h" />
     <ClInclude Include="MainForm.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="tcpNetwork.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

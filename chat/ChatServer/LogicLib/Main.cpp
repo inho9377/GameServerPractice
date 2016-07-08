@@ -24,7 +24,6 @@ namespace NLogicLib
 		Release();
 	}
 
-	//로그 객체는 가장 먼저 만들고 가장 나중에 해제할 것
 	ERROR_CODE Main::Init()
 	{
 		m_pLogger = std::make_unique<ConsoleLog>();
@@ -33,26 +32,24 @@ namespace NLogicLib
 
 		m_pNetwork = std::make_unique<NServerNetLib::TcpNetwork>();
 		auto result = m_pNetwork->Init(m_pServerConfig.get(), m_pLogger.get());
-
+			
 		if (result != NET_ERROR_CODE::NONE)
 		{
 			m_pLogger->Write(LOG_TYPE::L_ERROR, "%s | Init Fail. NetErrorCode(%s)", __FUNCTION__, (short)result);
 			return ERROR_CODE::MAIN_INIT_NETWORK_INIT_FAIL;
 		}
 
-		//접속한 클라이언트의 정보 관리 (로그인 정보 등)
+		
 		m_pUserMgr = std::make_unique<UserManager>();
 		m_pUserMgr->Init(m_pServerConfig->MaxClientCount);
 
-		//방 객체 관리 (room은 lobby안에)
 		m_pLobbyMgr = std::make_unique<LobbyManager>();
-		m_pLobbyMgr->Init({ m_pServerConfig->MaxLobbyCount,
-			m_pServerConfig->MaxLobbyUserCount,
-			m_pServerConfig->MaxRoomCountByLobby,
-			m_pServerConfig->MaxRoomUserCount },
-			m_pNetwork.get(), m_pLogger.get());
+		m_pLobbyMgr->Init({ m_pServerConfig->MaxLobbyCount, 
+							m_pServerConfig->MaxLobbyUserCount,
+							m_pServerConfig->MaxRoomCountByLobby, 
+							m_pServerConfig->MaxRoomUserCount },
+						m_pNetwork.get(), m_pLogger.get());
 
-		//패킷이 만들어지면 가져와서 처리
 		m_pPacketProc = std::make_unique<PacketProcess>();
 		m_pPacketProc->Init(m_pNetwork.get(), m_pUserMgr.get(), m_pLobbyMgr.get(), m_pLogger.get());
 
@@ -62,7 +59,12 @@ namespace NLogicLib
 		return ERROR_CODE::NONE;
 	}
 
-	void Main::Release() { }
+	void Main::Release() 
+	{
+		if (m_pNetwork) {
+			m_pNetwork->Release();
+		}
+	}
 
 	void Main::Stop()
 	{
@@ -76,36 +78,34 @@ namespace NLogicLib
 			m_pNetwork->Run();
 
 			while (true)
-			{
+			{				
 				auto packetInfo = m_pNetwork->GetPacketInfo();
 
 				if (packetInfo.PacketId == 0)
 				{
 					break;
 				}
-
-				m_pPacketProc->Process(packetInfo);
-				CheckMalignUser();
-				//몇 초당 한번씩 이곳에 조사하는 함수 (이전에 조사했던 시간을 저장해야)
-				//좀비객체도 정리
+				else
+				{
+					m_pPacketProc->Process(packetInfo);
+				}
 			}
 
-			std::this_thread::sleep_for(std::chrono::milliseconds(0));
+			//현재 상태 체크 (악의적 유저 걸름)
+			m_pPacketProc->StateCheck();
 		}
 	}
 
 	ERROR_CODE Main::LoadConfig()
 	{
 		m_pServerConfig = std::make_unique<NServerNetLib::ServerConfig>();
-
+		
 		wchar_t sPath[MAX_PATH] = { 0, };
 		::GetCurrentDirectory(MAX_PATH, sPath);
-
 
 		wchar_t inipath[MAX_PATH] = { 0, };
 		_snwprintf_s(inipath, _countof(inipath), _TRUNCATE, L"%s\\ServerConfig.ini", sPath);
 
-		//ini 파일에 접근하여 값을 가져오는 부분
 		m_pServerConfig->Port = (unsigned short)GetPrivateProfileInt(L"Config", L"Port", 0, inipath);
 		m_pServerConfig->BackLogCount = GetPrivateProfileInt(L"Config", L"BackLogCount", 0, inipath);
 		m_pServerConfig->MaxClientCount = GetPrivateProfileInt(L"Config", L"MaxClientCount", 0, inipath);
@@ -124,12 +124,5 @@ namespace NLogicLib
 		m_pLogger->Write(NServerNetLib::LOG_TYPE::L_INFO, "%s | Port(%d), Backlog(%d)", __FUNCTION__, m_pServerConfig->Port, m_pServerConfig->BackLogCount);
 		return ERROR_CODE::NONE;
 	}
-
-
-	void Main::CheckMalignUser()
-	{
-
-
-
-	}
+		
 }

@@ -37,6 +37,9 @@
     <ClInclude Include="UserManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ConnectedUserManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Lobby.cpp">

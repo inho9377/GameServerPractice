@@ -145,6 +145,7 @@ private:
 		ioctlsocket(s, FIONBIO, (unsigned long*)&u10n);
 	}
 
+	//데이터를 받는다.
 	void RecvData()
 	{
 		fd_set read_set;
@@ -193,6 +194,42 @@ private:
 
 			if (pPktHeader->BodySize > (dataSize - readPos))
 			{
+				readPos -= PACKET_HEADER_SIZE;
+				break;
+			}
+
+			if (pPktHeader->BodySize > MAX_PACKET_SIZE)
+			{
+				readPos -= PACKET_HEADER_SIZE;
+				return;// NET_ERROR_CODE::RECV_CLIENT_MAX_PACKET;
+			}
+
+			AddPacketQueue(pPktHeader->id, pPktHeader->BodySize, &m_RecvBuffer[readPos]);
+
+			readPos += pPktHeader->BodySize;
+		}
+
+		m_recvSize -= readPos;
+
+		if (m_recvSize > 0)
+		{
+			memcpy(m_RecvBuffer, &m_RecvBuffer[readPos], m_recvSize);
+		}
+	}
+
+	/*void RecvBufferProcess()
+	{
+		auto readPos = 0;
+		const auto dataSize = m_recvSize;
+		PacketHeader* pPktHeader;
+
+		while ((dataSize - readPos) > PACKET_HEADER_SIZE)
+		{
+			pPktHeader = (PacketHeader*)&m_RecvBuffer[readPos];
+			readPos += PACKET_HEADER_SIZE;
+
+			if (pPktHeader->BodySize > (dataSize - readPos))
+			{
 				//BUG
 				readPos -= PACKET_HEADER_SIZE;
 				break;
@@ -215,7 +252,7 @@ private:
 
 
 	}
-
+	*/
 
 
 	void AddPacketQueue(const short pktId, const short bodySize, char* pDataPos)

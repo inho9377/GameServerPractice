@@ -2,6 +2,8 @@
 
 namespace NCommon
 {
+
+
 	// 21 이상부터 시작해야 한다!!!
 	enum class PACKET_ID : short
 	{
@@ -24,6 +26,14 @@ namespace NCommon
 		LOBBY_LEAVE_REQ = 46,
 		LOBBY_LEAVE_RES = 47,
 		LOBBY_LEAVE_USER_NTF = 48,
+
+		LOBBY_CHAT_REQ = 50,
+		LOBBY_CHAT_RES = 51,
+		LOBBY_CHAT_NTF = 52,
+
+		LOBBY_SECRET_CHAT_REQ = 55,
+		LOBBY_SECRET_CHAT_RES = 56,
+		LOBBY_SECRET_CHAT_NTF = 57,
 
 		ROOM_ENTER_REQ = 61,
 		ROOM_ENTER_RES = 62,

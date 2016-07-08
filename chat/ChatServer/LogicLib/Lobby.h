@@ -27,7 +27,7 @@ namespace NLogicLib
 	using ILog = NServerNetLib::ILog;
 
 	class User;
-
+	
 	struct LobbyUser
 	{
 		short Index = 0;
@@ -41,28 +41,27 @@ namespace NLogicLib
 		virtual ~Lobby();
 
 		void Init(const short lobbyIndex, const short maxLobbyUserCount, const short maxRoomCountByLobby, const short maxRoomUserCount);
-
+		
 		void SetNetwork(TcpNet* pNetwork, ILog* pLogger);
 
 		short GetIndex() { return m_LobbyIndex; }
 
 
 		ERROR_CODE EnterUser(User* pUser);
-		//유저가 로비에서 방으로 들어가는 경우도 LeaveLobby
 		ERROR_CODE LeaveUser(const int userIndex);
-
+		
 		short GetUserCount();
 
-
+		
 		void NotifyLobbyEnterUserInfo(User* pUser);
-
+		
 		ERROR_CODE SendRoomList(const int sessionId, const short startRoomId);
 
 		ERROR_CODE SendUserList(const int sessionId, const short startUserIndex);
 
 		void NotifyLobbyLeaveUserInfo(User* pUser);
 
-
+		
 		Room* GetRoom(const short roomIndex);
 
 		void NotifyChangedRoomInfo(const short roomIndex);
@@ -71,11 +70,19 @@ namespace NLogicLib
 
 		auto MaxRoomCount() { return (short)m_RoomList.size(); }
 
+		Room* CreateRoom();
+
+		void NotifyChat(const int sessionIndex, const char* pszUserID, const wchar_t* pszMsg);
+
+		void SecretChat(const int sessionIndex, const char* pszUserID, const wchar_t* pszMsg, const int toSessionIndex);
+
+
 	protected:
-		//유저에게 로비의 인원을 실시간으로 알려줘야됨
 		void SendToAllUser(const short packetId, const short dataSize, char* pData, const int passUserindex = -1);
 
+		void SendSpecificUser(const short packetId, const short datasize, char* pData, const int userIndex);
 
+		
 
 	protected:
 		User* FindUser(const int userIndex);
@@ -94,9 +101,7 @@ namespace NLogicLib
 
 		short m_MaxUserCount = 0;
 		std::vector<LobbyUser> m_UserList;
-		//유저인덱스-해당유저를 갖는 Dict
 		std::unordered_map<int, User*> m_UserIndexDic;
-		//유저아이디-해당유저를 갖는 Dict
 		std::unordered_map<const char*, User*> m_UserIDDic;
 
 		std::vector<Room> m_RoomList;

@@ -22,12 +22,8 @@ namespace NServerNetLib
 	};
 
 	const int MAX_IP_LEN = 32; // IP 문자열 최대 길이
-	const int MAX_PACKET_SIZE = 1024; // 최대 패킷 크기
-	//const int MAX_SOCK_OPT_RECV_BUUER_SIZE = MAX_PACKET_SIZE * 10; // 소켓 옵션용 받기 버퍼 크기
-	//const int MAX_SOCK_OPT_SEND_BUUER_SIZE = MAX_PACKET_SIZE * 10; // 소켓 옵션용 보내기 버퍼 크기
-	//const int MAX_CLIENT_RECV_BUFFER_SIZE = MAX_PACKET_SIZE * 8; // 클라이언트 받기용 최대 버퍼 크기
-	//const int MAX_CLIENT_SEND_BUFFER_SIZE = MAX_PACKET_SIZE * 8; // 4k. 클라이언트 보내기용 최대 버퍼 크기
-
+	const int MAX_PACKET_BODY_SIZE = 1024; // 최대 패킷 보디 크기
+	
 	struct ClientSession
 	{
 		bool IsConnected() { return SocketFD > 0 ? true : false; }
@@ -38,6 +34,7 @@ namespace NServerNetLib
 			SocketFD = 0;
 			IP[0] = '\0';
 			RemainingDataSize = 0;
+			PrevReadPosInRecvBuffer = 0;
 			SendSize = 0;
 		}
 
@@ -48,11 +45,10 @@ namespace NServerNetLib
 
 		char*   pRecvBuffer = nullptr;
 		int     RemainingDataSize = 0;
+		int     PrevReadPosInRecvBuffer = 0;
 
 		char*   pSendBuffer = nullptr;
 		int     SendSize = 0;
-
-		//현재시간 변수
 	};
 
 	struct RecvPacketInfo
@@ -78,11 +74,13 @@ namespace NServerNetLib
 		SOCKET_RECV_ERROR = 3,
 		SOCKET_RECV_BUFFER_PROCESS_ERROR = 4,
 		SOCKET_SEND_ERROR = 5,
+		FORCING_CLOSE = 6,
 	};
 	
 
 	enum class PACKET_ID : short
 	{
+		NTF_SYS_CONNECT_SESSION = 2,
 		NTF_SYS_CLOSE_SESSION = 3,
 				
 	};

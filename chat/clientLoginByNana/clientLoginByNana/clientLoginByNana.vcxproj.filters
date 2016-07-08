@@ -16,6 +16,9 @@
     <Filter Include="ClientScrren">
       <UniqueIdentifier>{8f4e9bd7-42bf-471c-9877-62efc7c24efb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{bb753ea3-e28e-4e2a-83fa-fb4989c54b19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -43,6 +46,24 @@
     </ClInclude>
     <ClInclude Include="MainForm.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientSceenRoom.h">
+      <Filter>ClientScrren</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\conmanip.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\ErrorCode.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Packet.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\PacketID.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

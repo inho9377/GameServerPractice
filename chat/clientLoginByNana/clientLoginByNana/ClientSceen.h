@@ -21,34 +21,34 @@ public:
 	{
 		m_pForm = pform;
 
-		m_lbl1 = std::make_shared<label>((form&)*m_pForm, nana::rectangle(22, 17, 18, 18));
+		m_lbl1 = std::make_shared<label>((form&)*m_pForm, nana::rectangle(222, 217, 18, 18));
 		m_lbl1->caption("IP:");
-		m_IPtxt = std::make_shared<textbox>((form&)*m_pForm, nana::rectangle(43, 15, 128, 20));
+		m_IPtxt = std::make_shared<textbox>((form&)*m_pForm, nana::rectangle(243, 215, 128, 20));
 		m_IPtxt->caption("127.0.0.1");
 
-		m_lbl2 = std::make_shared<label>((form&)*m_pForm, nana::rectangle(187, 17, 30, 18));
+		m_lbl2 = std::make_shared<label>((form&)*m_pForm, nana::rectangle(387, 217, 30, 18));
 		m_lbl2->caption("Port:");
-		m_Porttxt = std::make_shared<textbox>((form&)*m_pForm, nana::rectangle(214, 15, 60, 20));
+		m_Porttxt = std::make_shared<textbox>((form&)*m_pForm, nana::rectangle(414, 215, 60, 20));
 		m_Porttxt->caption("23452");
 
-		m_Connectbtn = std::make_shared<button>((form&)*m_pForm, nana::rectangle(283, 14, 102, 23));
+		m_Connectbtn = std::make_shared<button>((form&)*m_pForm, nana::rectangle(483, 214, 102, 23));
 		m_Connectbtn->caption("Connent");
 		m_Connectbtn->events().click([&]() {
 			this->ConnectOrDisConnect();
 		});
 
 
-		m_lbl3 = std::make_shared<label>((form&)*m_pForm, nana::rectangle(22, 58, 18, 18));
+		m_lbl3 = std::make_shared<label>((form&)*m_pForm, nana::rectangle(222, 358, 18, 18));
 		m_lbl3->caption("ID:");
-		m_IDtxt = std::make_shared<textbox>((form&)*m_pForm, nana::rectangle(43, 56, 115, 20));
+		m_IDtxt = std::make_shared<textbox>((form&)*m_pForm, nana::rectangle(243, 356, 115, 20));
 		m_IDtxt->caption("jacking");
 
-		m_lbl4 = std::make_shared<label>((form&)*m_pForm, nana::rectangle(170, 58, 69, 18));
+		m_lbl4 = std::make_shared<label>((form&)*m_pForm, nana::rectangle(370, 358, 69, 18));
 		m_lbl4->caption("PassWord:");
-		m_PWtxt = std::make_shared<textbox>((form&)*m_pForm, nana::rectangle(230, 56, 115, 20));
+		m_PWtxt = std::make_shared<textbox>((form&)*m_pForm, nana::rectangle(430, 356, 115, 20));
 		m_PWtxt->caption("1234");
 
-		m_Loginbtn = std::make_shared<button>((form&)*m_pForm, nana::rectangle(353, 54, 102, 23));
+		m_Loginbtn = std::make_shared<button>((form&)*m_pForm, nana::rectangle(553, 354, 102, 23));
 		m_Loginbtn->caption("Login");
 		m_Loginbtn->events().click([&]() {
 			this->LogInOut();
@@ -71,6 +71,7 @@ public:
 				{
 					m_Loginbtn->caption("LogOut");
 					SetCurSceenType(CLIENT_SCEEN_TYPE::LOGIN);
+
 				}
 				else
 				{
@@ -88,6 +89,34 @@ public:
 		return true;
 	}
 
+	void UIBlind()
+	{
+		m_Connectbtn->hide();
+		m_lbl1->hide();
+		m_lbl2->hide();
+		m_lbl3->hide();
+		m_lbl4->hide();
+		m_IPtxt->hide();
+		m_IDtxt->hide();
+		m_Loginbtn->hide();
+		m_Porttxt->hide();
+		m_PWtxt->hide();
+	}
+
+	void UIShow()
+	{
+		m_Connectbtn->show();
+		m_lbl1->show();
+		m_lbl2->show();
+		m_lbl3->show();
+		m_lbl4->show();
+		m_IPtxt->show();
+		m_IDtxt->show();
+		m_Loginbtn->show();
+		m_Porttxt->show();
+		m_PWtxt->show();
+	}
+
 private:
 	void ConnectOrDisConnect()
 	{
@@ -102,6 +131,7 @@ private:
 			{
 				m_Connectbtn->caption("DisConnect");
 				m_Loginbtn->enabled(true);
+
 			}
 			else
 			{

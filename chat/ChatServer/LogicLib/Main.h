@@ -33,7 +33,6 @@ namespace NLogicLib
 
 
 	private:
-		//ini파일 읽어들임
 		ERROR_CODE LoadConfig();
 
 		void Release();
@@ -49,8 +48,6 @@ namespace NLogicLib
 		std::unique_ptr<PacketProcess> m_pPacketProc;
 		std::unique_ptr<UserManager> m_pUserMgr;
 		std::unique_ptr<LobbyManager> m_pLobbyMgr;
-
-		void CheckMalignUser();
-
+		
 	};
 }

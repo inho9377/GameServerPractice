@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include <mutex>
 #include <iostream>
@@ -8,23 +7,18 @@
 #pragma warning( disable : 4244 )
 //http://cppconlib.codeplex.com/
 //http://mariusbancila.ro/blog/2013/08/25/cppconlib-a-cpp-library-for-working-with-the-windows-console/
-
-
 #include "../../Common/conmanip.h"
 using namespace conmanip;
 #pragma warning( pop )
-
-
 
 #include "../ServerNetLib/ILog.h"
 
 namespace NLogicLib
 {
-	//Console에 Log를 찍을때 사용하는 클래스
 	class ConsoleLog : public NServerNetLib::ILog
 	{
 	public:
-		ConsoleLog()
+		ConsoleLog() 
 		{
 			console_out_context ctxout;
 			m_Conout = ctxout;
@@ -36,7 +30,6 @@ namespace NLogicLib
 	protected:
 		virtual void Error(const char* pText) override
 		{
-			//멀티 쓰레드일경우에 필요
 			std::lock_guard<std::mutex> guard(m_lock);
 			std::cout << settextcolor(console_text_colors::red) << "[ERROR] | " << pText << std::endl;
 		}

@@ -43,6 +43,9 @@ public:
 
 	virtual bool ProcessPacket(const short packetId, char* pData) { return false; }
 
+	virtual void UIBlind() {}
+
+	virtual void UIShow() {}
 
 	void SetNetwork(TcpNetwork* pNetwork) { m_pRefNetwork = pNetwork; }
 
