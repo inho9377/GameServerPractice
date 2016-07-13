@@ -101,7 +101,7 @@ public:
 			auto pktRes = (NCommon::PktLobbyChatRes*)pData;
 			if (pktRes->ErrorCode == (short)NCommon::ERROR_CODE::NONE)
 			{
-				ShowChatMessage("___", m_beforeInputMessage);
+				ShowChatMessage(L"___", m_beforeInputMessage);
 				m_beforeInputMessage.clear();
 			}
 			else
@@ -131,7 +131,7 @@ public:
 			auto pktRes = (NCommon::PktLobbySecretChatRes*)pData;
 			if (pktRes->ErrorCode == (short)NCommon::ERROR_CODE::NONE)
 			{
-				ShowChatMessage("(Secret)__", m_beforeInputMessage);
+				ShowChatMessage(L"(Secret)__", m_beforeInputMessage);
 				m_beforeInputMessage.clear();
 			}
 			else
@@ -146,6 +146,12 @@ public:
 			auto pktRes = (NCommon::PktLobbySecretChatNtf*)pData;
 			ShowChatMessage(pktRes->UserID, pktRes->Msg);
 			break;
+		}
+
+		case (short)PACKET_ID::ROOM_LEAVE_RES:
+		{
+			RequestRoomList(0);
+			RequestUserList(0);
 		}
 		default:
 			return false;
@@ -499,23 +505,23 @@ public:
 			m_pRefNetwork->SendPacket((short)PACKET_ID::LOBBY_CHAT_REQ, sizeof(reqPkt), (char*)&reqPkt);
 		}
 
-		void ShowChatMessage(char* userID, wchar_t* msg)
+		void ShowChatMessage(std::string userID, wchar_t* msg)
 		{
-			std::string se = "(se";
-			std::string strID = userID + se;
-			
-			char szMsg[64] = { 0, };
-			UnicodeToAnsi(msg, 64, szMsg);
-			std::string strMsg = szMsg;
-			m_chatBox->at(0).append({ strID , szMsg });
+			std::wstring wsTmp(userID.begin(), userID.end());
+
+
+			//std::string se = "(se";
+			//std::string strID = userID /*+ se*/;
+			std::wstring strMsg = msg;
+			m_chatBox->at(0)->append({ wsTmp , strMsg });
 		}
 
-		void ShowChatMessage(char* userID, std::wstring msg)
+		void ShowChatMessage(std::wstring userID, std::wstring msg)
 		{
-			std::string strID = userID;
-			std::string strMsg;
-			strMsg.assign(msg.begin(), msg.end());
-			m_chatBox->at(0).append({ strID , strMsg });
+			//std::string strID = userID;
+			//std::string strMsg;
+			//strMsg.assign(msg.begin(), msg.end());
+			m_chatBox->at(0)->append({ userID , msg });
 		}
 
 private:

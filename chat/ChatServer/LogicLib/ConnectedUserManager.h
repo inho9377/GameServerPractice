@@ -99,7 +99,7 @@ namespace NLogicLib
 
 				auto diff = curSecTime - ConnectedUserList[i].m_ConnectedTime;
 				//접속 후 3초동안 로그인 안하면 악의적 유저로 간주
-				if (diff >= 3)
+				if (diff >= 30)
 				{
 					m_pRefLogger->Write(NServerNetLib::LOG_TYPE::L_WARN, "%s | Login Wait Time Over. sessionIndex(%d).", __FUNCTION__, i);
 					m_pRefNetwork->ForcingClose(i);

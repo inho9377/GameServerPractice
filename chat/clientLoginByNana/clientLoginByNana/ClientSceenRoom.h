@@ -92,7 +92,7 @@ public:
 			auto pktRes = (NCommon::PktLobbyChatRes*)pData;
 			if (pktRes->ErrorCode == (short)NCommon::ERROR_CODE::NONE)
 			{
-				ShowChatMessage("___", m_beforeInputMessage);
+				ShowChatMessage(L"___", m_beforeInputMessage);
 				m_beforeInputMessage.clear();
 			}
 			else
@@ -117,6 +117,7 @@ public:
 				SetCurSceenType(CLIENT_SCEEN_TYPE::LOBBY);
 				m_UserList.clear();
 				m_RoomUserList->clear();
+				m_chatBox->clear();
 			}
 			else
 			{
@@ -267,6 +268,25 @@ private:
 
 		m_UserList.clear();
 	}
+
+	void ShowChatMessage(std::string userID, wchar_t* msg)
+	{
+		std::wstring wsTmp(userID.begin(), userID.end());
+
+
+		//std::string se = "(se";
+		//std::string strID = userID /*+ se*/;
+		std::wstring strMsg = msg;
+		m_chatBox->at(0)->append({ wsTmp , strMsg });
+	}
+
+	void ShowChatMessage(std::wstring userID, std::wstring msg)
+	{
+		//std::string strID = userID;
+		//std::string strMsg;
+		//strMsg.assign(msg.begin(), msg.end());
+		m_chatBox->at(0)->append({ userID , msg });
+	}/*
 	void ShowChatMessage(char* userID, wchar_t* msg)
 	{
 		std::string strID = userID;
@@ -281,7 +301,7 @@ private:
 		std::string strMsg;
 		strMsg.assign(msg.begin(), msg.end());
 		m_chatBox->at(0).append({ strID , strMsg });
-	}
+	}*/
 private:
 
 	form* m_pForm = nullptr;
